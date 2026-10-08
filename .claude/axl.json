@@ -1,0 +1,20 @@
+{
+    "base": "dev",
+    "protected": [
+        "dev",
+        "master"
+    ],
+    "prefixes": {
+        "feature": "feat/",
+        "fix": "fix/"
+    },
+    "checks": [
+        {
+            "name": "lint",
+            "run": "yarn lint"
+        }
+    ],
+    "format": null,
+    "specsDir": "openspec",
+    "claudeCommits": false
+}
