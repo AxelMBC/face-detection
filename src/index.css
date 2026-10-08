@@ -15,6 +15,9 @@
   --accent-glow: rgba(76, 201, 240, 0.35);
   --good: #5ff0a6;
   --bad: #ff5d8f;
+  --on-accent: #03121b;
+  --panel-highlight: rgba(255, 255, 255, 0.02);
+  --panel-shadow: rgba(0, 0, 0, 0.3);
 
   --mono: ui-monospace, 'JetBrains Mono', 'Fira Code', Menlo, Consolas,
     monospace;

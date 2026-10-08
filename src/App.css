@@ -32,7 +32,7 @@
   border: 1px solid var(--accent);
   background: var(--accent-bg);
   box-shadow:
-    0 0 0 2px rgba(76, 201, 240, 0.12),
+    0 0 0 2px color-mix(in srgb, var(--accent) 12%, transparent),
     inset 0 0 6px var(--accent-glow);
   transform: rotate(45deg);
   position: relative;
@@ -91,8 +91,8 @@
     var(--panel-bg-2) 100%
   );
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.02),
-    0 12px 30px rgba(0, 0, 0, 0.3);
+    0 0 0 1px var(--panel-highlight),
+    0 12px 30px var(--panel-shadow);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -146,7 +146,7 @@
 }
 
 .scan-btn:hover:not(:disabled) {
-  background: rgba(76, 201, 240, 0.18);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
   color: var(--text-h);
   box-shadow:
     inset 0 0 0 1px var(--accent),
@@ -349,8 +349,8 @@
   border: 1px solid var(--accent);
   box-shadow:
     0 0 14px var(--accent-glow),
-    inset 0 0 14px rgba(76, 201, 240, 0.12);
-  background: rgba(76, 201, 240, 0.04);
+    inset 0 0 14px color-mix(in srgb, var(--accent) 12%, transparent);
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
   animation: box-in 0.3s ease both;
 }
 
@@ -403,7 +403,7 @@
   left: -1px;
   padding: 2px 7px;
   background: var(--accent);
-  color: #03121b;
+  color: var(--on-accent);
   font: 600 10px/1 var(--mono);
   letter-spacing: 0.1em;
   white-space: nowrap;
@@ -418,9 +418,9 @@
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(76, 201, 240, 0) 45%,
-    rgba(76, 201, 240, 0.55) 50%,
-    rgba(76, 201, 240, 0) 55%,
+    transparent 45%,
+    color-mix(in srgb, var(--accent) 55%, transparent) 50%,
+    transparent 55%,
     transparent 100%
   );
   mix-blend-mode: screen;
@@ -475,7 +475,7 @@
 
 .hud-value.good {
   color: var(--good);
-  text-shadow: 0 0 8px rgba(95, 240, 166, 0.4);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--good) 40%, transparent);
 }
 .hud-value.bad {
   color: var(--bad);
@@ -502,9 +502,9 @@
 
 .hud-error {
   padding: 8px 10px;
-  border: 1px solid rgba(255, 93, 143, 0.4);
+  border: 1px solid color-mix(in srgb, var(--bad) 40%, transparent);
   border-radius: 6px;
-  background: rgba(255, 93, 143, 0.08);
+  background: color-mix(in srgb, var(--bad) 8%, transparent);
   color: var(--bad);
   font-size: 11px;
   line-height: 1.5;
@@ -530,7 +530,7 @@
   padding: 6px 8px;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: rgba(76, 201, 240, 0.04);
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
 }
 
 .face-list-id {
@@ -577,7 +577,7 @@
   padding: 16px 28px;
   text-decoration: none;
   font-family: var(--mono);
-  background: rgba(76, 201, 240, 0.03);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
   transition: background 0.25s ease, transform 0.25s ease;
 }
 
@@ -660,4 +660,13 @@
 .sig:focus-visible .sig-url {
   opacity: 1;
   text-shadow: 0 0 8px var(--accent-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reticle,
+  .face-box,
+  .scanline,
+  .hud-value.pending {
+    animation: none;
+  }
 }

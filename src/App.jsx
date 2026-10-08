@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as faceapi from "@vladmandic/face-api";
 import { initBackend } from "./tfBackend";
 import "./App.css";
@@ -35,6 +35,17 @@ function useFaceApi() {
 const SAMPLE_URL =
   "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800";
 
+// Must match `.canvas img` in App.css (object-fit: contain, centred).
+function fitContain(natural, rendered) {
+  if (!natural.w || !natural.h) return { scale: 1, offsetX: 0, offsetY: 0 };
+  const scale = Math.min(rendered.w / natural.w, rendered.h / natural.h);
+  return {
+    scale,
+    offsetX: (rendered.w - natural.w * scale) / 2,
+    offsetY: (rendered.h - natural.h * scale) / 2,
+  };
+}
+
 export default function App() {
   const { ready: modelReady, error: modelError, backend } = useFaceApi();
   const [url, setUrl] = useState("");
@@ -44,25 +55,26 @@ export default function App() {
   const [detections, setDetections] = useState([]);
   const [naturalSize, setNaturalSize] = useState({ w: 0, h: 0 });
   const [renderSize, setRenderSize] = useState({ w: 0, h: 0 });
-  const imgRef = useRef(null);
+  const [scanId, setScanId] = useState(0);
+  const latestScanRef = useRef(0);
   const stageRef = useRef(null);
 
-  useLayoutEffect(() => {
-    const img = imgRef.current;
+  // Unstable identity loops: React re-runs the ref, the observer re-fires setState.
+  const observeImg = useCallback((img) => {
     if (!img) return;
-    const update = () => {
+    const ro = new ResizeObserver(() => {
       setRenderSize({ w: img.clientWidth, h: img.clientHeight });
-    };
-    const ro = new ResizeObserver(update);
+    });
     ro.observe(img);
-    update();
     return () => ro.disconnect();
-  }, [submittedUrl, status]);
+  }, []);
 
-  const onSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const trimmed = url.trim();
     if (!trimmed || !modelReady) return;
+    latestScanRef.current += 1;
+    setScanId(latestScanRef.current);
     setError(null);
     setDetections([]);
     setNaturalSize({ w: 0, h: 0 });
@@ -71,9 +83,9 @@ export default function App() {
     setSubmittedUrl(trimmed);
   };
 
-  const onImgLoad = async () => {
-    const img = imgRef.current;
-    if (!img) return;
+  const handleImgLoad = async (e) => {
+    const img = e.currentTarget;
+    const scan = latestScanRef.current;
     setNaturalSize({ w: img.naturalWidth, h: img.naturalHeight });
     setRenderSize({ w: img.clientWidth, h: img.clientHeight });
     setStatus("detecting");
@@ -83,25 +95,26 @@ export default function App() {
         scoreThreshold: 0.5,
       });
       const results = await faceapi.detectAllFaces(img, opts);
+      if (scan !== latestScanRef.current) return;
       setDetections(results);
       setStatus("done");
     } catch (err) {
+      if (scan !== latestScanRef.current) return;
       setError(err?.message ?? "Detection failed");
       setStatus("error");
     }
   };
 
-  const onImgError = () => {
+  const handleImgError = () => {
     setError("Could not load image. Check the URL or its CORS policy.");
     setStatus("error");
   };
 
-  const useSample = () => {
+  const handleSampleClick = () => {
     setUrl(SAMPLE_URL);
   };
 
-  const scaleX = naturalSize.w ? renderSize.w / naturalSize.w : 1;
-  const scaleY = naturalSize.h ? renderSize.h / naturalSize.h : 1;
+  const fit = fitContain(naturalSize, renderSize);
 
   const modelLabel = modelError ? "ERROR" : modelReady ? "READY" : "LOADING…";
 
@@ -143,9 +156,12 @@ export default function App() {
         </p>
       </section>
 
-      <form className="input-row" onSubmit={onSubmit}>
-        <span className="input-prefix">URL</span>
+      <form className="input-row" onSubmit={handleSubmit}>
+        <label htmlFor="url-input" className="input-prefix">
+          URL
+        </label>
         <input
+          id="url-input"
           type="url"
           inputMode="url"
           placeholder="https://…"
@@ -165,7 +181,7 @@ export default function App() {
       </form>
 
       <div className="input-foot">
-        <button type="button" className="link-btn" onClick={useSample}>
+        <button type="button" className="link-btn" onClick={handleSampleClick}>
           ↳ try a sample
         </button>
         <span className="dot" />
@@ -194,12 +210,13 @@ export default function App() {
           {submittedUrl && (
             <div className="canvas">
               <img
-                ref={imgRef}
+                key={scanId}
+                ref={observeImg}
                 src={submittedUrl}
                 alt=""
                 crossOrigin="anonymous"
-                onLoad={onImgLoad}
-                onError={onImgError}
+                onLoad={handleImgLoad}
+                onError={handleImgError}
                 draggable={false}
               />
               <div className="overlay" aria-hidden="true">
@@ -210,10 +227,10 @@ export default function App() {
                       key={i}
                       className="face-box"
                       style={{
-                        left: x * scaleX,
-                        top: y * scaleY,
-                        width: width * scaleX,
-                        height: height * scaleY,
+                        left: fit.offsetX + x * fit.scale,
+                        top: fit.offsetY + y * fit.scale,
+                        width: width * fit.scale,
+                        height: height * fit.scale,
                       }}
                     >
                       <span className="corner tl" />

@@ -1,5 +1,6 @@
 {
   "enabledPlugins": {
-    "axl@axl": true
+    "axl@axl": true,
+    "atenea@venteks": false
   }
 }
