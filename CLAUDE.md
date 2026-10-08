@@ -33,6 +33,11 @@ TinyFaceDetector weights are served statically from `public/models/` and loaded 
 
 ### UI (`src/App.jsx`)
 
-Everything lives in one component plus a `useFaceApi` hook (backend init → model load → `ready`/`error`/`backend`). Detection runs in the `<img>` `onLoad` handler with a `status` state machine: `idle → loading → detecting → done | error`. Detection boxes are in the image's natural pixel space; they're scaled to the rendered size (tracked with a `ResizeObserver`) before being positioned in the overlay.
+`App.jsx` holds two hooks and the `App` component, which only keeps the URL input text and renders:
+
+- `useFaceApi` — backend init → model load → `ready`/`error`/`backend`.
+- `useFaceDetection` — the scan flow. `scan(url)` bumps a scan id that is used as the `<img>` `key`, so every submit remounts the image and fires `load`/`error` even for the same URL; detection runs in that `onLoad` and drops its result if a newer scan started meanwhile. `status` goes `idle → loading → detecting → done | error`.
+
+Detection boxes are in the image's natural pixel space. `fitContain` maps them onto the rendered `<img>` (size tracked with a `ResizeObserver` callback ref) and must stay in sync with `.canvas img`'s `object-fit: contain` in `App.css`.
 
 Styling is plain CSS in `src/App.css` / `src/index.css` with a "HUD/scanner" aesthetic. The author signature link (`.sig` in `App.jsx`) and the author meta/backlink in `index.html` are intentional — keep them.

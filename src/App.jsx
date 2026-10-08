@@ -35,6 +35,8 @@ function useFaceApi() {
 const SAMPLE_URL =
   "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800";
 
+const EMPTY_SIZE = { w: 0, h: 0 };
+
 // Must match `.canvas img` in App.css (object-fit: contain, centred).
 function fitContain(natural, rendered) {
   if (!natural.w || !natural.h) return { scale: 1, offsetX: 0, offsetY: 0 };
@@ -46,18 +48,23 @@ function fitContain(natural, rendered) {
   };
 }
 
-export default function App() {
-  const { ready: modelReady, error: modelError, backend } = useFaceApi();
-  const [url, setUrl] = useState("");
-  const [submittedUrl, setSubmittedUrl] = useState("");
+function formatIndex(i) {
+  return `#${String(i + 1).padStart(2, "0")}`;
+}
+
+function formatScore(score) {
+  return `${(score * 100).toFixed(1)}%`;
+}
+
+function useFaceDetection() {
+  const [imageUrl, setImageUrl] = useState("");
+  const [scanId, setScanId] = useState(0);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
   const [detections, setDetections] = useState([]);
-  const [naturalSize, setNaturalSize] = useState({ w: 0, h: 0 });
-  const [renderSize, setRenderSize] = useState({ w: 0, h: 0 });
-  const [scanId, setScanId] = useState(0);
+  const [naturalSize, setNaturalSize] = useState(EMPTY_SIZE);
+  const [renderSize, setRenderSize] = useState(EMPTY_SIZE);
   const latestScanRef = useRef(0);
-  const stageRef = useRef(null);
 
   // Unstable identity loops: React re-runs the ref, the observer re-fires setState.
   const observeImg = useCallback((img) => {
@@ -69,18 +76,15 @@ export default function App() {
     return () => ro.disconnect();
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const trimmed = url.trim();
-    if (!trimmed || !modelReady) return;
+  const scan = (url) => {
     latestScanRef.current += 1;
     setScanId(latestScanRef.current);
     setError(null);
     setDetections([]);
-    setNaturalSize({ w: 0, h: 0 });
-    setRenderSize({ w: 0, h: 0 });
+    setNaturalSize(EMPTY_SIZE);
+    setRenderSize(EMPTY_SIZE);
     setStatus("loading");
-    setSubmittedUrl(trimmed);
+    setImageUrl(url);
   };
 
   const handleImgLoad = async (e) => {
@@ -110,11 +114,48 @@ export default function App() {
     setStatus("error");
   };
 
+  return {
+    imageUrl,
+    scanId,
+    status,
+    error,
+    detections,
+    naturalSize,
+    fit: fitContain(naturalSize, renderSize),
+    observeImg,
+    handleImgLoad,
+    handleImgError,
+    scan,
+  };
+}
+
+export default function App() {
+  const { ready: modelReady, error: modelError, backend } = useFaceApi();
+  const {
+    imageUrl,
+    scanId,
+    status,
+    error,
+    detections,
+    naturalSize,
+    fit,
+    observeImg,
+    handleImgLoad,
+    handleImgError,
+    scan,
+  } = useFaceDetection();
+  const [url, setUrl] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const trimmed = url.trim();
+    if (!trimmed || !modelReady) return;
+    scan(trimmed);
+  };
+
   const handleSampleClick = () => {
     setUrl(SAMPLE_URL);
   };
-
-  const fit = fitContain(naturalSize, renderSize);
 
   const modelLabel = modelError ? "ERROR" : modelReady ? "READY" : "LOADING…";
 
@@ -189,12 +230,8 @@ export default function App() {
       </div>
 
       <section className="workspace">
-        <div
-          ref={stageRef}
-          className={`stage stage-${status}`}
-          data-empty={!submittedUrl}
-        >
-          {!submittedUrl && (
+        <div className={`stage stage-${status}`} data-empty={!imageUrl}>
+          {!imageUrl && (
             <div className="stage-empty">
               <div className="reticle" aria-hidden="true">
                 <span />
@@ -207,12 +244,12 @@ export default function App() {
             </div>
           )}
 
-          {submittedUrl && (
+          {imageUrl && (
             <div className="canvas">
               <img
                 key={scanId}
                 ref={observeImg}
-                src={submittedUrl}
+                src={imageUrl}
                 alt=""
                 crossOrigin="anonymous"
                 onLoad={handleImgLoad}
@@ -238,8 +275,7 @@ export default function App() {
                       <span className="corner bl" />
                       <span className="corner br" />
                       <span className="tag">
-                        #{String(i + 1).padStart(2, "0")} ·{" "}
-                        {(det.score * 100).toFixed(1)}%
+                        {formatIndex(i)} · {formatScore(det.score)}
                       </span>
                     </div>
                   );
@@ -303,11 +339,9 @@ export default function App() {
             <ol className="face-list">
               {detections.map((d, i) => (
                 <li key={i}>
-                  <span className="face-list-id">
-                    #{String(i + 1).padStart(2, "0")}
-                  </span>
+                  <span className="face-list-id">{formatIndex(i)}</span>
                   <span className="face-list-score">
-                    {(d.score * 100).toFixed(1)}%
+                    {formatScore(d.score)}
                   </span>
                   <span className="face-list-dim muted">
                     {Math.round(d.box.width)}×{Math.round(d.box.height)}
