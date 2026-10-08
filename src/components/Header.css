@@ -1,0 +1,53 @@
+/* ─────────────────────────── header ─────────────────────────── */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-h);
+}
+
+.brand-mark {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--accent);
+  background: var(--accent-bg);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent) 12%, transparent),
+    inset 0 0 6px var(--accent-glow);
+  transform: rotate(45deg);
+  position: relative;
+}
+.brand-mark::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.brand-text {
+  letter-spacing: 0.18em;
+}
+
+.meta {
+  display: none;
+}
+@media (min-width: 720px) {
+  .meta {
+    display: inline;
+  }
+}

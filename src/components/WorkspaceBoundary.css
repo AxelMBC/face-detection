@@ -1,0 +1,4 @@
+.workspace-fallback {
+  grid-column: 1 / -1;
+  min-height: 360px;
+}

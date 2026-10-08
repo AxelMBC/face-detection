@@ -1,0 +1,98 @@
+/* ─────────────────────────── signature ───────────────────────────
+   The scanner "detects" its creator: a face-box framing the credit.
+   Real anchor → axelbarraza.com (SEO backlink, dofollow). */
+.sig {
+  position: relative;
+  align-self: center;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 4px auto 8px;
+  padding: 16px 28px;
+  text-decoration: none;
+  font-family: var(--mono);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.sig-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sig-frame .corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--accent-border);
+  filter: drop-shadow(0 0 4px var(--accent-glow));
+  transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
+}
+.sig-frame .corner.tl { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.sig-frame .corner.tr { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.sig-frame .corner.bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.sig-frame .corner.br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+/* lock-on: corners snap wider, like a focusing reticle */
+.sig:hover .sig-frame .corner,
+.sig:focus-visible .sig-frame .corner {
+  width: 18px;
+  height: 18px;
+  border-color: var(--accent);
+}
+
+.sig-tag {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  opacity: 0.65;
+  text-transform: uppercase;
+  transition: opacity 0.25s ease;
+}
+.sig:hover .sig-tag,
+.sig:focus-visible .sig-tag {
+  opacity: 1;
+  text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.sig-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.sig-label {
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.sig-name {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--text-h);
+  text-transform: uppercase;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+.sig:hover .sig-name,
+.sig:focus-visible .sig-name {
+  color: var(--accent);
+  text-shadow: 0 0 18px var(--accent-glow);
+}
+
+.sig-url {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  opacity: 0.8;
+}
+.sig:hover .sig-url,
+.sig:focus-visible .sig-url {
+  opacity: 1;
+  text-shadow: 0 0 8px var(--accent-glow);
+}

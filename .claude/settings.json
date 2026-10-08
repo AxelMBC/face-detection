@@ -1,6 +1,11 @@
 {
-  "enabledPlugins": {
-    "axl@axl": true,
-    "atenea@venteks": false
-  }
+  "extraKnownMarketplaces": {
+    "axl": {
+      "source": {
+        "source": "git",
+        "url": "git@github.com:AxelMBC/axl-plugin.git"
+      }
+    }
+  },
+  "enabledPlugins": { "axl@axl": true, "atenea@venteks": false }
 }

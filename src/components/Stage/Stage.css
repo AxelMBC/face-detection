@@ -1,0 +1,235 @@
+/* ─────────────────────────── stage ─────────────────────────── */
+.stage {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, var(--panel-bg) 0%, var(--panel-bg-2) 100%);
+  padding: 14px;
+  min-height: 360px;
+  overflow: hidden;
+}
+
+.stage::before,
+.stage::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--accent-border);
+  pointer-events: none;
+}
+.stage::before {
+  top: 6px;
+  left: 6px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.stage::after {
+  bottom: 6px;
+  right: 6px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.stage-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.stage-empty p {
+  margin: 0;
+}
+
+.stage-empty .muted {
+  color: var(--muted);
+  opacity: 0.7;
+  letter-spacing: 0.1em;
+}
+
+.reticle {
+  width: 84px;
+  height: 84px;
+  position: relative;
+  margin-bottom: 8px;
+  animation: reticle-pulse 2.4s ease-in-out infinite;
+}
+
+.reticle span {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--accent);
+  opacity: 0.7;
+}
+.reticle span:nth-child(1) {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+.reticle span:nth-child(2) {
+  top: 0;
+  right: 0;
+  border-left: 0;
+  border-bottom: 0;
+}
+.reticle span:nth-child(3) {
+  bottom: 0;
+  left: 0;
+  border-right: 0;
+  border-top: 0;
+}
+.reticle span:nth-child(4) {
+  bottom: 0;
+  right: 0;
+  border-left: 0;
+  border-top: 0;
+}
+
+@keyframes reticle-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px var(--accent-glow));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 14px var(--accent-glow));
+  }
+}
+
+/* canvas — wrapping the actual image + overlays */
+.canvas {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.canvas img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+  user-select: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* face boxes */
+.face-box {
+  position: absolute;
+  border: 1px solid var(--accent);
+  box-shadow:
+    0 0 14px var(--accent-glow),
+    inset 0 0 14px color-mix(in srgb, var(--accent) 12%, transparent);
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+  animation: box-in 0.3s ease both;
+}
+
+@keyframes box-in {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.face-box .corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--accent-strong);
+  filter: drop-shadow(0 0 4px var(--accent-glow));
+}
+.face-box .corner.tl {
+  top: -2px;
+  left: -2px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.face-box .corner.tr {
+  top: -2px;
+  right: -2px;
+  border-left: 0;
+  border-bottom: 0;
+}
+.face-box .corner.bl {
+  bottom: -2px;
+  left: -2px;
+  border-right: 0;
+  border-top: 0;
+}
+.face-box .corner.br {
+  bottom: -2px;
+  right: -2px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.face-box .tag {
+  position: absolute;
+  top: -22px;
+  left: -1px;
+  padding: 2px 7px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: 600 10px/1 var(--mono);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* scanline */
+.scanline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 45%,
+    color-mix(in srgb, var(--accent) 55%, transparent) 50%,
+    transparent 55%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+  animation: scanline 1.4s linear infinite;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reticle,
+  .face-box,
+  .scanline {
+    animation: none;
+  }
+}

@@ -1,0 +1,105 @@
+/* ─────────────────────────── HUD ─────────────────────────── */
+.hud {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    var(--panel-bg) 0%,
+    var(--panel-bg-2) 100%
+  );
+  padding: 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 24px;
+}
+
+.hud-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.hud-label {
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.hud-value {
+  color: var(--text-h);
+  text-transform: uppercase;
+}
+
+.hud-value.good {
+  color: var(--good);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--good) 40%, transparent);
+}
+.hud-value.bad {
+  color: var(--bad);
+}
+.hud-value.pending {
+  color: var(--accent);
+  animation: blink 1.2s ease-in-out infinite;
+}
+.hud-value.muted {
+  color: var(--muted);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.hud-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.face-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.face-list li {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  gap: 10px;
+  align-items: baseline;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.face-list-id {
+  color: var(--accent);
+}
+.face-list-score {
+  color: var(--text-h);
+}
+.face-list-dim {
+  font-size: 10px;
+}
+
+.small {
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-value.pending {
+    animation: none;
+  }
+}
