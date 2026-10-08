@@ -56,6 +56,17 @@ function formatScore(score) {
   return `${(score * 100).toFixed(1)}%`;
 }
 
+const MODEL_STATES = {
+  loading: { label: "LOADING…", tone: "pending", action: "> LOADING" },
+  ready: { label: "READY", tone: "good", action: "> SCAN" },
+  error: { label: "ERROR", tone: "bad", action: "> UNAVAILABLE" },
+};
+
+function modelState({ ready, error }) {
+  if (error) return MODEL_STATES.error;
+  return ready ? MODEL_STATES.ready : MODEL_STATES.loading;
+}
+
 function useFaceDetection() {
   const [imageUrl, setImageUrl] = useState("");
   const [scanId, setScanId] = useState(0);
@@ -157,7 +168,7 @@ export default function App() {
     setUrl(SAMPLE_URL);
   };
 
-  const modelLabel = modelError ? "ERROR" : modelReady ? "READY" : "LOADING…";
+  const model = modelState({ ready: modelReady, error: modelError });
 
   const statusLabel = (() => {
     switch (status) {
@@ -217,7 +228,7 @@ export default function App() {
           className="scan-btn"
           disabled={!modelReady || !url.trim()}
         >
-          {modelReady ? "> SCAN" : "> LOADING"}
+          {model.action}
         </button>
       </form>
 
@@ -291,13 +302,7 @@ export default function App() {
         <aside className="hud">
           <div className="hud-row">
             <span className="hud-label">▸ MODEL</span>
-            <span
-              className={`hud-value ${
-                modelError ? "bad" : modelReady ? "good" : "pending"
-              }`}
-            >
-              {modelLabel}
-            </span>
+            <span className={`hud-value ${model.tone}`}>{model.label}</span>
           </div>
           <div className="hud-row">
             <span className="hud-label">▸ BACKEND</span>
