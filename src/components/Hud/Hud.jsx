@@ -7,6 +7,7 @@ export default function Hud({
   model,
   modelError,
   backend,
+  source,
   status,
   error,
   detections,
@@ -24,6 +25,14 @@ export default function Hud({
           {backend ? backend.toUpperCase() : "…"}
         </span>
       </div>
+      {source && (
+        <div className="hud-row">
+          <span className="hud-label">▸ SOURCE</span>
+          <span className="hud-value source" title={source}>
+            {source}
+          </span>
+        </div>
+      )}
       <div className="hud-row">
         <span className="hud-label">▸ STATUS</span>
         <span className={`hud-value ${status === "error" ? "bad" : ""}`}>
@@ -33,9 +42,7 @@ export default function Hud({
       <div className="hud-row">
         <span className="hud-label">▸ SUBJECTS</span>
         <span className="hud-value">
-          {status === "done" || status === "detecting"
-            ? formatCount(detections.length)
-            : "--"}
+          {status === "done" ? formatCount(detections.length) : "--"}
         </span>
       </div>
       {naturalSize.w > 0 && (

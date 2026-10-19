@@ -4,7 +4,7 @@ import { modelState } from "./lib/format";
 import "./App.css";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
-import ScanForm from "./components/ScanForm";
+import ScanForm from "./components/ScanForm/ScanForm";
 import WorkspaceBoundary from "./components/WorkspaceBoundary";
 import Stage from "./components/Stage/Stage";
 import Hud from "./components/Hud/Hud";
@@ -15,12 +15,14 @@ export default function App() {
   const { ready: modelReady, error: modelError, backend } = useFaceApi();
   const {
     imageUrl,
+    source,
     scanId,
     status,
     error,
     detections,
     naturalSize,
     scan,
+    scanFile,
     handleImgLoad,
     handleImgError,
   } = useFaceDetection({ ready: modelReady });
@@ -31,7 +33,12 @@ export default function App() {
     <div className="shell">
       <Header />
       <Hero />
-      <ScanForm model={model} onScan={scan} />
+      <ScanForm
+        model={model}
+        canScan={modelReady}
+        onScan={scan}
+        onScanFile={scanFile}
+      />
 
       <WorkspaceBoundary key={scanId}>
         <section className="workspace">
@@ -48,6 +55,7 @@ export default function App() {
             model={model}
             modelError={modelError}
             backend={backend}
+            source={source}
             status={status}
             error={error}
             detections={detections}

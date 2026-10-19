@@ -26,8 +26,10 @@
 }
 
 .hud-label {
+  flex-shrink: 0;
   color: var(--muted);
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .hud-value {
@@ -48,6 +50,13 @@
 }
 .hud-value.muted {
   color: var(--muted);
+}
+.hud-value.source {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: none;
 }
 
 @keyframes blink {
