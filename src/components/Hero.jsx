@@ -9,7 +9,8 @@ export default function Hero() {
       <p className="lede">
         Paste a public image URL, or drop or paste an image file. The model
         loads in your browser, runs locally, and overlays bounding boxes on
-        every face it finds. No uploads, no servers.
+        every face it finds, or pixelates them so you can download a copy to
+        share. No uploads, no servers.
       </p>
     </section>
   );

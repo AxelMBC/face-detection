@@ -9,11 +9,17 @@ export default function Stage({
   status,
   detections,
   naturalSize,
+  image,
+  redaction,
   onImgLoad,
   onImgError,
 }) {
   const [observeRef, renderedSize] = useRenderedSize();
   const fit = fitContain(naturalSize, renderedSize);
+  const modeOf = (i) => {
+    if (!redaction.redacting) return "box";
+    return redaction.isRedacted(i) ? "redacted" : "excluded";
+  };
 
   return (
     <div className={`stage stage-${status}`} data-empty={!imageUrl}>
@@ -44,7 +50,15 @@ export default function Stage({
           />
           <div className="overlay" aria-hidden="true">
             {detections.map((det, i) => (
-              <FaceBox key={i} detection={det} index={i} fit={fit} />
+              <FaceBox
+                key={i}
+                detection={det}
+                index={i}
+                fit={fit}
+                mode={modeOf(i)}
+                image={image}
+                imageSize={naturalSize}
+              />
             ))}
           </div>
           {status === "detecting" && (

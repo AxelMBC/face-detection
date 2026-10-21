@@ -1,5 +1,6 @@
 import { useFaceApi } from "./detection/useFaceApi";
 import { useFaceDetection } from "./detection/useFaceDetection";
+import { useRedaction } from "./redaction/useRedaction";
 import { modelState } from "./lib/format";
 import "./App.css";
 import Header from "./components/Header";
@@ -16,16 +17,21 @@ export default function App() {
   const {
     imageUrl,
     source,
+    origin,
     scanId,
     status,
     error,
     detections,
     naturalSize,
+    image,
+    detail,
+    selectDetail,
     scan,
     scanFile,
     handleImgLoad,
     handleImgError,
   } = useFaceDetection({ ready: modelReady });
+  const redaction = useRedaction({ status, image, detections, origin });
 
   const model = modelState({ ready: modelReady, error: modelError });
 
@@ -48,6 +54,8 @@ export default function App() {
             status={status}
             detections={detections}
             naturalSize={naturalSize}
+            image={image}
+            redaction={redaction}
             onImgLoad={handleImgLoad}
             onImgError={handleImgError}
           />
@@ -60,6 +68,9 @@ export default function App() {
             error={error}
             detections={detections}
             naturalSize={naturalSize}
+            detail={detail}
+            onDetailChange={selectDetail}
+            redaction={redaction}
           />
         </section>
       </WorkspaceBoundary>

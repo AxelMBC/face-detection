@@ -82,14 +82,40 @@
 }
 
 .face-list li {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+.face-list-row {
   display: grid;
   grid-template-columns: 36px 1fr auto;
   gap: 10px;
   align-items: baseline;
+  width: 100%;
   padding: 6px 8px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--accent) 4%, transparent);
+}
+
+button.face-list-row {
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+button.face-list-row:hover {
+  background: var(--accent-bg);
+}
+
+.face-list li.excluded {
+  opacity: 0.5;
+  background: none;
+}
+.face-list li.excluded .face-list-score {
+  text-decoration: line-through;
 }
 
 .face-list-id {
@@ -100,6 +126,50 @@
 }
 .face-list-dim {
   font-size: 10px;
+}
+
+.hud-segment {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.hud-segment button,
+.hud-toggle {
+  padding: 4px 8px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.hud-segment button + button {
+  border-left: 1px solid var(--border);
+}
+.hud-segment button:hover,
+.hud-toggle:hover {
+  color: var(--text-h);
+}
+.hud-segment button[aria-pressed="true"],
+.hud-toggle[aria-pressed="true"] {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.hud-toggle {
+  min-width: 48px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.hud-toggle[aria-pressed="true"] {
+  border-color: var(--accent-border);
+}
+
+.download-btn {
+  padding: 10px 22px;
 }
 
 .small {
